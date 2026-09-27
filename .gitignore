@@ -1,4 +1,8 @@
 node_modules
-.dist
+dist
 .env.local
 .env.*.local
+storybook-static
+*.log
+test-results
+playwright-report

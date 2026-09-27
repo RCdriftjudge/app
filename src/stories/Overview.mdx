@@ -1,0 +1,16 @@
+import {Meta} from '@storybook/addon-docs/blocks'
+
+<Meta title="Overview" />
+
+# RC Drift Judge - screens
+
+Every screen, rendered from the real templates in `src/views.js` with mock `competition_state` data. Nothing here talks to Supabase.
+
+Step through in event order:
+
+1. **Landing** - create, join (by code or QR), register, rejoin
+2. **Director** - setup → qualifying → battles (OMT, rulings) → finished
+3. **Judge** - scoring, offline saving, blind voting
+4. **Competitor** - pending → approved → qualified → battles → result
+5. **Live Display** - the big screen through every phase
+6. **Feedback** - offline banner and toasts

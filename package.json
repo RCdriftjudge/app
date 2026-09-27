@@ -1,9 +1,34 @@
 {
-  "name":"rc-drift-judge-v0.9",
-  "private":true,
-  "version":"0.9.0",
-  "type":"module",
-  "scripts":{"dev":"vite","build":"vite build","preview":"vite preview"},
-  "dependencies":{"@supabase/supabase-js":"^2.91.0","qrcode":"^1.5.4","vite":"^7.1.0"},
-  "devDependencies":{}
+  "name": "rc-drift-judge-v0.9",
+  "private": true,
+  "version": "1.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "db:start": "supabase start -x studio,imgproxy,mailpit,edge-runtime,logflare,vector,storage-api,postgres-meta,supavisor",
+    "db:reset": "supabase db reset",
+    "env:local": "node scripts/local-env.mjs",
+    "test:e2e": "playwright test",
+    "test:db": "node --test tests/db/flow.test.mjs",
+    "walkthrough": "playwright test -c playwright.walkthrough.config.js && node scripts/compose-walkthrough.mjs",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.91.0",
+    "qrcode": "^1.5.4",
+    "vite": "^7.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@storybook/addon-docs": "^10.6.0",
+    "@storybook/html-vite": "^10.6.0",
+    "storybook": "^10.6.0",
+    "supabase": "^2.118.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
 }
