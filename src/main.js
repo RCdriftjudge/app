@@ -187,8 +187,16 @@ const actions={
     $('newDriverName').value='';$('newDriverTeam').value=''
     toast(`${name} added`,'ok');await refresh()
   },
+  async releaseJudge({member,name}){
+    if(!confirm(`Let ${name} move to a new phone?\n\nThey keep their seat and scores. On the new phone they tap Rejoin and enter the judge code and their rejoin code.`))return
+    await rpc('release_member',{p_member_id:member});toast(`${name} can now rejoin on a new phone`,'ok');await refresh()
+  },
+  async releaseDriver({driver,name}){
+    if(!confirm(`Let ${name} move to a new phone? They rejoin with the registration code and their rejoin code.`))return
+    await rpc('release_driver',{p_driver_id:driver});toast(`${name} can now rejoin on a new phone`,'ok');await refresh()
+  },
   async removeJudge({member,name}){
-    if(!confirm(`Remove ${name} from the judging panel? Their seat opens for someone else.`))return
+    if(!confirm(`Replace ${name} with a different person?\n\nTheir seat opens for someone new to join with the judge code. Scores they already gave still count. If it's the same person on a new phone, use "New phone" instead.`))return
     await rpc('remove_member',{p_member_id:member});await refresh()
   },
   async startQualifying(){await rpc('start_qualifying',{p_competition_id:s.session.competition_id});await refresh()},

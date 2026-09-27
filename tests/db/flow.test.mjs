@@ -167,17 +167,33 @@ test('full competition: registration, qualifying, bracket, OMT, override, rejoin
   st=await display.state(cid)
   assert.equal(st.competition.champion_driver_id,byName('Cal'))
 
-  // Rejoin on new devices.
+  // Rejoin codes are pinned to their phone: a new phone needs the director to release the seat first.
   const phone=await device()
+  assert.match((await phone.call('rejoin',{p_event_code:joinCode,p_rejoin_code:judges[1].rejoin_code})).error,/in use on another phone/)
+  // Same phone (e.g. after tapping Leave) is fine.
+  assert.equal((await judges[1].call('rejoin',{p_event_code:joinCode,p_rejoin_code:judges[1].rejoin_code})).judge_number,2)
+  await director.call('release_member',{p_member_id:judges[1].member_id})
+  assert.equal((await director.state(cid)).judges.find(j=>j.judge_number===2).released,true)
   const r1=await phone.call('rejoin',{p_event_code:joinCode,p_rejoin_code:judges[1].rejoin_code.toLowerCase()})
   assert.deepEqual([r1.role,r1.judge_number],['judge',2])
   await rejects(judges[1].state(cid),/not part of/)
-  const phone2=await device()
-  assert.equal((await phone2.call('rejoin',{p_event_code:joinCode,p_rejoin_code:pin})).role,'director')
+  // A release is used up by the phone that takes it; the old phone can't take it back.
+  assert.match((await judges[1].call('rejoin',{p_event_code:joinCode,p_rejoin_code:judges[1].rejoin_code})).error,/in use on another phone/)
+  await rejects(judges[0].call('release_member',{p_member_id:judges[2].member_id}),/Only the director/)
+
   const phone3=await device()
+  assert.match((await phone3.call('rejoin',{p_event_code:regCode,p_rejoin_code:regs[2].rejoin_code})).error,/in use on another phone/)
+  await director.call('release_driver',{p_driver_id:regs[2].driver_id})
   const r3=await phone3.call('rejoin',{p_event_code:regCode,p_rejoin_code:regs[2].rejoin_code})
   assert.equal(r3.role,'competitor')
   assert.deepEqual((await phone3.state(cid)).my_drivers.map(d=>d.name),['Cal'])
+  // A director-added driver has no phone yet, so the first phone to use the code claims it.
+  const finPhone=await device()
+  assert.equal((await finPhone.call('rejoin',{p_event_code:regCode,p_rejoin_code:fin.rejoin_code})).role,'competitor')
+
+  // The director PIN is not pinned: it is how the director moves phones.
+  const phone2=await device()
+  assert.equal((await phone2.call('rejoin',{p_event_code:joinCode,p_rejoin_code:pin})).role,'director')
 
   const guesser=await device()
   for(let i=0;i<20;i++) assert.equal((await guesser.call('rejoin',{p_event_code:joinCode,p_rejoin_code:'!'+i})).error,'Rejoin code not found')

@@ -111,3 +111,38 @@ test('user-supplied names are escaped, not rendered as HTML',async({page})=>{
   await expect(page.getByText('<img src=x onerror="window.pwned=1">')).toBeVisible()
   expect(await page.evaluate(()=>window.pwned)).toBeUndefined()
 })
+
+// Bad venue wifi: requests that never answer must not lock the app.
+const stall=()=>new Promise(()=>{})
+
+test('a stalled request times out with a message and the app stays usable',async({page})=>{
+  test.setTimeout(40000)
+  await mockSupabase(page)
+  await page.route('**/rest/v1/rpc/rejoin',stall)
+  await page.goto('/')
+  await page.getByRole('button',{name:'Already registered? Rejoin'}).click()
+  await page.locator('#rejoinEvent').fill('K7Q2XM')
+  await page.locator('#rejoinCode').fill('A9')
+  await page.getByRole('button',{name:'Rejoin',exact:true}).click()
+  await expect(page.getByRole('status')).toHaveText('No connection to the server',{timeout:20000})
+  await page.getByRole('button',{name:'Back'}).click()
+  await expect(page.getByRole('button',{name:'Create Competition'})).toBeVisible()
+})
+
+test('a stalled judge score is saved on the phone instead of freezing',async({page})=>{
+  test.setTimeout(40000)
+  await mockSupabase(page)
+  const driver={id:'d1',name:'Ava',team_name:null,car_number:'1',status:'approved'}
+  await page.route('**/rest/v1/rpc/competition_state',route=>route.fulfill(json({
+    competition:{id:'comp-1',name:'Saturday Night Drift',phase:'qualifying',judge_count:3,state_version:2,active_driver_id:'d1',active_run:1},
+    me:{member_id:'m2',role:'judge',judge_number:2,rejoin_code:'KC',display_name:'Kim'},my_drivers:[],judges:[],drivers:[driver],
+    leaderboard:[],qualifying_progress:[],my_scores:[],battles:[]})))
+  await page.route('**/rest/v1/rpc/submit_qualifying_score',stall)
+  await page.addInitScript(()=>localStorage.setItem('rcdj-session-v10',JSON.stringify({competition_id:'comp-1',role:'judge'})))
+  await page.goto('/')
+  for(const [k,v] of [['line','30'],['angle','25'],['style','28']])await page.locator(`input[id^="score-${k}-"]`).fill(v)
+  await page.getByRole('button',{name:'Submit score'}).click()
+  await expect(page.getByText('Saved offline')).toBeVisible({timeout:20000})
+  await expect(page.getByText('1 submission waiting to send')).toBeVisible()
+  expect(JSON.parse(await page.evaluate(()=>localStorage.getItem('rcdj-pending-calls-v10'))).length).toBe(1)
+})

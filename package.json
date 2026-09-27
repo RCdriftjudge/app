@@ -11,7 +11,7 @@
     "db:reset": "supabase db reset",
     "env:local": "node scripts/local-env.mjs",
     "test:e2e": "playwright test",
-    "test:db": "node --test tests/db/flow.test.mjs",
+    "test:db": "node --test tests/db/flow.test.mjs tests/db/race-day.test.mjs",
     "walkthrough": "playwright test -c playwright.walkthrough.config.js && node scripts/compose-walkthrough.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
