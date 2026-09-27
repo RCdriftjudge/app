@@ -6,6 +6,7 @@ This repository contains the live-test web app for the RC drift competition judg
 - Vite
 - Supabase Auth / Postgres / RLS / Realtime
 - Mobile-first PWA-style web app
+- GitHub Pages deployment
 
 ## Security
 - `.env.local` is intentionally excluded from Git.
