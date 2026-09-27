@@ -26,8 +26,8 @@ Anyone can get back in on a new phone from **Rejoin**. Drivers and judges use th
 
 ## Database
 The schema lives in `supabase/migrations/`, and every write goes through the RPCs defined there.
-- `20260927000000_base_schema.sql` is the original schema.
-- `20260927010000_competition_flow.sql` does three things:
+- `20260927000000_base_schema.sql` is the hosted project's schema as of 2026-09-27, which replaces the original `schema.sql` and the nine migrations applied from the dashboard.
+- `20260927040000_competition_flow.sql` does three things:
   - brings the repo in line with objects that had been created by hand in the dashboard
   - fixes the RLS issues
   - adds the qualifying, bracket and battle logic

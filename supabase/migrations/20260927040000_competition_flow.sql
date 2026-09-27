@@ -9,6 +9,8 @@
 -- ---------------------------------------------------------------------------------------------------
 
 alter table competitions add column if not exists driver_registration_code text;
+alter table competitions add column if not exists active_driver_id uuid references drivers(id) on delete set null;
+alter table competitions add column if not exists active_battle_id uuid references battles(id) on delete set null;
 alter table competitions add column if not exists state_version bigint not null default 0;
 alter table competitions add column if not exists bracket_size int;
 alter table competitions add column if not exists champion_driver_id uuid references drivers(id);
@@ -24,7 +26,7 @@ alter table competition_secrets enable row level security;
 
 alter table members add column if not exists rejoin_code text;
 alter table members add column if not exists active boolean not null default true;
-create unique index if not exists members_rejoin_code_key on members(competition_id, rejoin_code);
+create unique index if not exists members_competition_rejoin_code_uidx on members(competition_id, rejoin_code) where rejoin_code is not null;
 
 alter table drivers add column if not exists team_name text;
 alter table drivers add column if not exists status text not null default 'pending';
@@ -33,8 +35,8 @@ alter table drivers add column if not exists user_id uuid references auth.users(
 alter table drivers add column if not exists seed int;
 alter table drivers drop constraint if exists drivers_status_check;
 alter table drivers add constraint drivers_status_check check (status in ('pending','approved','rejected'));
-create unique index if not exists drivers_rejoin_code_key on drivers(competition_id, rejoin_code);
-create unique index if not exists drivers_car_number_key on drivers(competition_id, car_number);
+create unique index if not exists drivers_competition_rejoin_code_uidx on drivers(competition_id, rejoin_code) where rejoin_code is not null;
+create unique index if not exists drivers_competition_car_number_key on drivers(competition_id, car_number) where car_number is not null;
 
 -- One row per judge per qualifying run. (qualifying_runs held a single combined score and is unused.)
 create table if not exists qualifying_scores(
@@ -197,6 +199,9 @@ drop function if exists public.join_competition_by_code(text,text,text);
 drop function if exists public.register_driver(text,text,text);
 drop function if exists public.rejoin_driver(text);
 drop function if exists public.rejoin_judge(text);
+-- Older join path from the dashboard: seats judges without the removal and seat checks below.
+drop function if exists public.join_competition(text,text,text);
+drop function if exists public.generate_rejoin_code(uuid);
 
 create or replace function public.create_competition(p_name text, p_director_name text, p_judge_count int) returns jsonb
 language plpgsql security definer set search_path=public as $$
