@@ -1,0 +1,246 @@
+/* Synthwave drift-punk theme. Everything is scoped to :root[data-theme="synthwave"], so it can be previewed
+   next to the current look. Poster on the outside (logo, headers, landing screens, primary buttons),
+   timing tool on the inside (codes, scores, numbers, forms stay clean and high contrast). */
+
+:root[data-theme="synthwave"]{
+  --bg:#090716;--bg-raised:#0f0d1d;--surface:#12101f;--surface-raised:#18152a;
+  --pink:#e91fa6;--hot-pink:#eb1cd0;--pink-light:#ef54a6;--cyan:#0ed9f4;--cyan-blue:#1ca3e5;
+  --purple:#5a115f;--deep-purple:#601495;--electric-blue:#121f95;
+  --text:#ebe5f2;--text-muted:#aaa4b5;--text-dim:#716d7c;
+  --border:rgba(14,217,244,.5);--border-hot:rgba(233,31,166,.75);
+  --glow-cyan:0 0 6px rgba(14,217,244,.7),0 0 18px rgba(14,217,244,.25);
+  --glow-pink:0 0 6px rgba(233,31,166,.75),0 0 20px rgba(233,31,166,.3);
+  --signature:linear-gradient(90deg,#0ed9f4 0%,#0ed9f4 30%,#8d35dc 58%,#e91fa6 100%);
+  --display:'Knewave','Impact',sans-serif;
+  --condensed:'Barlow Condensed','Roboto Condensed','Arial Narrow',sans-serif;
+  --fast:150ms;
+  color-scheme:dark;
+}
+
+[data-theme="synthwave"] body{
+  background:radial-gradient(circle at 50% -10%,rgba(105,20,150,.28),transparent 42%),linear-gradient(180deg,#0b0818 0%,#070711 100%) fixed;
+  color:var(--text);font-family:var(--condensed);font-weight:500;font-size:17px;letter-spacing:.01em;
+}
+/* Film grain over everything, too faint to notice until it's gone. */
+[data-theme="synthwave"] body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;background:url(./assets/grain.svg);mix-blend-mode:overlay}
+
+[data-theme="synthwave"] main{position:relative;isolation:isolate;max-width:760px}
+[data-theme="synthwave"] main.displayMode{max-width:1100px}
+
+/* ---- Header + logo --------------------------------------------------------------------------- */
+[data-theme="synthwave"] header{background:rgba(9,7,22,.86);border-bottom:1px solid rgba(233,31,166,.35);padding:12px 16px 14px}
+[data-theme="synthwave"] header::after{content:'';position:absolute;left:0;right:0;bottom:-10px;height:10px;background:url(./assets/torn-edge.svg) center/100% 100% no-repeat;pointer-events:none}
+[data-theme="synthwave"] .logo{font-family:var(--display);font-weight:400;font-size:26px;line-height:1;text-transform:uppercase;transform:skewX(-9deg) rotate(-2deg);letter-spacing:-.02em;white-space:nowrap}
+[data-theme="synthwave"] .logo span{display:inline-block;text-shadow:3px 3px 0 #000,-1px -1px 0 rgba(0,0,0,.6);
+  -webkit-mask:linear-gradient(transparent 0 0),repeating-linear-gradient(-2deg,#000 0 3px,rgba(0,0,0,.72) 3px 4px);mask:repeating-linear-gradient(-2deg,#000 0 3px,rgba(0,0,0,.72) 3px 4px)}
+[data-theme="synthwave"] .logo span:nth-child(1){color:var(--cyan)}
+[data-theme="synthwave"] .logo span:nth-child(2){color:var(--pink);margin-left:-2px}
+[data-theme="synthwave"] .logo span:nth-child(3){color:#fff;margin-left:-2px}
+[data-theme="synthwave"] header small{font-family:var(--condensed);font-weight:600;font-size:15px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted);margin-top:4px}
+[data-theme="synthwave"] .statusdot{background:var(--text-dim);box-shadow:none}
+[data-theme="synthwave"] .statusdot.on{background:var(--cyan);box-shadow:var(--glow-cyan)}
+
+/* Landing screens get the big logo and the outrun scene. */
+[data-theme="synthwave"] main:is([data-screen="home"],[data-screen="create"],[data-screen="join"],[data-screen="driver"],[data-screen="rejoin"])::before{
+  content:'';position:fixed;left:0;right:0;bottom:0;height:min(78vh,720px);z-index:-1;pointer-events:none;
+  background:url(./assets/palm-left.svg) left bottom/auto 62% no-repeat,url(./assets/palm-right.svg) right bottom/auto 58% no-repeat,url(./assets/hero-scene.svg) center bottom/cover no-repeat;
+  -webkit-mask:linear-gradient(180deg,transparent,#000 22%);mask:linear-gradient(180deg,transparent,#000 22%);opacity:.95}
+/* Working forms sit on a calmer version of the scene. */
+[data-theme="synthwave"] main:is([data-screen="create"],[data-screen="join"],[data-screen="driver"],[data-screen="rejoin"])::before{opacity:.45;height:50vh}
+[data-theme="synthwave"] main[data-screen="home"] header{background:transparent;border:0;justify-content:center;padding-top:38px}
+[data-theme="synthwave"] main[data-screen="home"] header::after,[data-theme="synthwave"] main[data-screen="home"] header small,[data-theme="synthwave"] main[data-screen="home"] .hdr{display:none}
+[data-theme="synthwave"] main[data-screen="home"] header>div{text-align:center}
+[data-theme="synthwave"] main[data-screen="home"] .logo{font-size:clamp(52px,17vw,96px);line-height:.86;white-space:normal;display:flex;flex-direction:column;align-items:center}
+[data-theme="synthwave"] main[data-screen="home"] .logo span:nth-child(2){font-size:1.18em;margin:-.08em 0 -.06em;color:var(--pink);
+  text-shadow:2px 2px 0 #7a0f5a,5px 5px 0 #000,0 0 22px rgba(233,31,166,.45)}
+[data-theme="synthwave"] main[data-screen="home"] .logo span:nth-child(3){color:var(--cyan);font-size:.74em;letter-spacing:.06em;margin-left:.9em;
+  text-shadow:3px 3px 0 #000,0 0 16px rgba(14,217,244,.4)}
+[data-theme="synthwave"] main[data-screen="home"] .logo::after{content:'';display:block;width:78%;height:22px;margin:4px auto 0;background:url(./assets/brush-short.svg) center/100% 100% no-repeat;opacity:.9}
+
+/* Home: the key art is the hero. It already carries the logo, so the lettered logo is kept for screen
+   readers only. Cropped toward the logo and car on phones. */
+[data-theme="synthwave"] main[data-screen="home"] header{display:block;position:relative;padding:0;margin:0 -1px;
+  height:clamp(300px,82vw,460px);
+  background:image-set(url(./assets/hero-art-900.webp) 1x,url(./assets/hero-art.webp) 2x) 44% 42%/cover no-repeat;
+  -webkit-mask:linear-gradient(180deg,#000 72%,transparent);mask:linear-gradient(180deg,#000 72%,transparent)}
+[data-theme="synthwave"] main[data-screen="home"] .logo{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[data-theme="synthwave"] main[data-screen="home"] .logo::after{display:none}
+[data-theme="synthwave"] main[data-screen="home"]::before{display:none}
+[data-theme="synthwave"] main[data-screen="home"] .hero{margin-top:-28px}
+@media (min-width:760px){[data-theme="synthwave"] main[data-screen="home"] header{border-radius:0 0 18px 18px}}
+
+/* ---- Cards, headings, text ------------------------------------------------------------------- */
+[data-theme="synthwave"] .card{
+  background:linear-gradient(180deg,rgba(24,21,42,.96),rgba(9,8,20,.98));
+  border:1px solid rgba(14,217,244,.5);border-radius:14px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.025),0 0 16px rgba(14,217,244,.08)}
+[data-theme="synthwave"] .card.error{border-color:var(--border-hot)}
+[data-theme="synthwave"] .warnCard{border-color:rgba(255,196,64,.6)}
+[data-theme="synthwave"] .hero{background:linear-gradient(180deg,rgba(15,13,29,.9),rgba(9,7,22,.94));backdrop-filter:blur(3px)}
+[data-theme="synthwave"] main[data-screen="home"] .hero{background:transparent;border:0;box-shadow:none;backdrop-filter:none;padding-top:8px}
+
+[data-theme="synthwave"] h2{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.05;text-transform:uppercase;letter-spacing:-.01em;
+  transform:skewX(-8deg);color:#fff;text-shadow:3px 3px 0 #000}
+[data-theme="synthwave"] .hero h2{display:inline-block;padding:10px 26px 12px;margin:0 0 16px;
+  background:url(./assets/brush-header.svg) center/100% 100% no-repeat}
+[data-theme="synthwave"] h3{font-family:var(--condensed);font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-muted)}
+/* The little ALL-CAPS kicker at the top of a card becomes a cyan tag with a pink slash. */
+[data-theme="synthwave"] .card>small:first-child{display:inline-flex;align-items:center;gap:8px;font-family:var(--condensed);font-weight:600;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+[data-theme="synthwave"] .card>small:first-child::before{content:'';width:26px;height:13px;background:url(./assets/slash.svg) center/contain no-repeat}
+[data-theme="synthwave"] small,[data-theme="synthwave"] .muted{color:var(--text-muted)}
+[data-theme="synthwave"] .small{font-size:16px}
+[data-theme="synthwave"] summary{color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+
+/* ---- Buttons: primary brush, secondary outline, quiet utility ---------------------------------- */
+[data-theme="synthwave"] button{font-family:var(--condensed);font-weight:700;font-size:18px;letter-spacing:.04em;text-transform:uppercase;
+  min-height:52px;border-radius:10px;background:#0c0a1a;color:var(--text);border:1px solid rgba(14,217,244,.55);
+  transition:transform var(--fast),box-shadow var(--fast),border-color var(--fast),background-color var(--fast)}
+[data-theme="synthwave"] button:hover{box-shadow:var(--glow-cyan)}
+[data-theme="synthwave"] button:active{transform:scale(.98)}
+[data-theme="synthwave"] button:focus-visible,[data-theme="synthwave"] input:focus-visible,[data-theme="synthwave"] summary:focus-visible{outline:3px solid #fff;outline-offset:3px}
+[data-theme="synthwave"] button.small{min-height:40px;font-size:15px;padding:6px 14px}
+
+/* Primary: a loaded pink brush dragged across a normal rectangular button, with cyan under-stroke. */
+[data-theme="synthwave"] button.primary{position:relative;isolation:isolate;border:0;border-radius:6px;min-height:60px;
+  background:url(./assets/brush-short.svg) 6% 100%/46% 26% no-repeat,url(./assets/brush-wide.svg) center/104% 100% no-repeat;
+  color:#fff;font-family:var(--display);font-weight:400;font-size:24px;letter-spacing:.02em;text-shadow:2px 2px 0 #000;
+  font-style:normal;transform:skewX(-6deg)}
+[data-theme="synthwave"] button.primary:hover{box-shadow:none;filter:drop-shadow(0 0 10px rgba(233,31,166,.55))}
+[data-theme="synthwave"] button.primary:active{transform:skewX(-6deg) scale(.98)}
+[data-theme="synthwave"] button.primary:disabled{filter:grayscale(1) brightness(.55);opacity:1}
+[data-theme="synthwave"] button.primary.small{font-size:17px;min-height:40px;padding:6px 16px}
+@media (prefers-reduced-motion:no-preference){
+  [data-theme="synthwave"] button.primary:not(:disabled){animation:sw-wipe .32s cubic-bezier(.2,.8,.2,1) both}
+  [data-theme="synthwave"] main{animation:sw-enter .22s ease-out both}
+}
+@keyframes sw-wipe{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes sw-enter{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+
+[data-theme="synthwave"] .ghost{background:transparent;border-color:rgba(170,164,181,.3);color:var(--text-muted);font-size:15px;min-height:48px}
+[data-theme="synthwave"] .ghost:hover{box-shadow:none;border-color:var(--text-muted)}
+[data-theme="synthwave"] button:disabled{opacity:.4}
+
+/* Home menu: icon on the left, brush fragment on the right. */
+[data-theme="synthwave"] main[data-screen="home"] .hero>button{display:flex;align-items:center;gap:14px;text-align:left;padding:0 18px;min-height:60px;margin:10px 0}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button::before{content:'';flex:none;width:26px;height:26px;background:currentColor;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button:not(.primary)::after{content:'';margin-left:auto;width:54px;height:14px;background:url(./assets/brush-short.svg) center/100% 100% no-repeat;opacity:.55}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.primary{justify-content:center}
+/* One-off setup the director does once per event: a quiet text link, not a menu item. */
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link{min-height:48px;margin-top:18px;padding:0;justify-content:center;background:none;border:0;box-shadow:none;
+  font-size:15px;font-weight:600;letter-spacing:.08em;color:var(--text-muted);text-decoration:underline;text-decoration-color:rgba(14,217,244,.5);text-underline-offset:4px}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link::before{width:18px;height:18px}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link::after{display:none}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link:hover{color:var(--text)}
+[data-theme="synthwave"] [data-page="create"]{--icon:url(./assets/icons/flag.svg)}
+[data-theme="synthwave"] [data-page="join"]{--icon:url(./assets/icons/judge.svg)}
+[data-theme="synthwave"] [data-page="join"][data-role="display"]{--icon:url(./assets/icons/screen.svg)}
+[data-theme="synthwave"] [data-page="driver"]{--icon:url(./assets/icons/car.svg)}
+[data-theme="synthwave"] [data-page="rejoin"]{--icon:url(./assets/icons/rejoin.svg)}
+[data-theme="synthwave"] main[data-screen="home"] .hero>h2,[data-theme="synthwave"] main[data-screen="home"] .hero>p{display:none}
+
+/* ---- Forms, codes, QR ----------------------------------------------------------------------- */
+[data-theme="synthwave"] label,[data-theme="synthwave"] legend{font-family:var(--condensed);font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+[data-theme="synthwave"] input:not([type=range]):not([type=radio]){min-height:56px;background:#090812;border:1px solid rgba(14,217,244,.65);border-radius:10px;color:#fff;
+  font-family:var(--condensed);font-weight:700;font-size:21px;letter-spacing:.03em;text-transform:none}
+[data-theme="synthwave"] input::placeholder{color:var(--text-dim);font-weight:500}
+[data-theme="synthwave"] input:focus{border-color:var(--cyan);box-shadow:var(--glow-cyan);outline:none}
+[data-theme="synthwave"] input[readonly]{border-style:solid;color:var(--cyan);letter-spacing:.3em;text-align:center;font-size:28px}
+[data-theme="synthwave"] #code,[data-theme="synthwave"] #driverCode,[data-theme="synthwave"] #rejoinEvent,[data-theme="synthwave"] #rejoinCode{text-transform:uppercase;letter-spacing:.24em;text-align:center}
+[data-theme="synthwave"] #rejoinCode{font-size:44px;min-height:84px}
+
+[data-theme="synthwave"] .code{font-family:var(--condensed);font-weight:800;font-size:52px;letter-spacing:.2em;padding:16px 10px 16px calc(10px + .2em);line-height:1;
+  color:#fff;background:#090812;border:2px solid var(--cyan);border-radius:12px;box-shadow:var(--glow-cyan)}
+[data-theme="synthwave"] .code.small{font-size:40px}
+[data-theme="synthwave"] .qr{position:relative;padding:14px;margin:6px auto 4px;width:max-content;border-radius:14px;
+  border:2px solid var(--pink);box-shadow:var(--glow-pink);background:#090812}
+[data-theme="synthwave"] .qr img,[data-theme="synthwave"] .qrSlot{display:block;background:#fff;border-radius:6px;width:220px;height:220px}
+[data-theme="synthwave"] .qr figcaption{font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text);margin-top:10px}
+[data-theme="synthwave"] .qr::after{content:'';position:absolute;right:-26px;top:-14px;width:78px;height:30px;background:url(./assets/paint-speckles.svg) center/cover no-repeat;pointer-events:none}
+
+/* Segmented controls (judge count, run, bracket size): selected = pink fill, not just colour. */
+[data-theme="synthwave"] .seg span,[data-theme="synthwave"] .seg button{background:#0c0a1f;border:1px solid rgba(14,217,244,.4);color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;border-radius:8px;min-height:50px;display:flex;align-items:center;justify-content:center}
+[data-theme="synthwave"] .seg input:checked+span,[data-theme="synthwave"] .seg button.on{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:var(--glow-pink)}
+[data-theme="synthwave"] .seg input:checked+span::before,[data-theme="synthwave"] .seg button.on::before{content:'● ';font-size:.7em;margin-right:4px}
+
+/* ---- Scores ------------------------------------------------------------------------------ */
+[data-theme="synthwave"] .score{padding:4px 0}
+[data-theme="synthwave"] .scoreHead label{font-size:18px;color:#fff}
+[data-theme="synthwave"] .scoreHead output{font-family:var(--condensed);font-weight:800;font-size:42px;color:#fff;line-height:1}
+[data-theme="synthwave"] .nudge{background:#0c0a1f;border-color:rgba(14,217,244,.4);font-size:28px;min-height:48px}
+[data-theme="synthwave"] input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--cyan) var(--pct,0%),#2a2640 var(--pct,0%));box-shadow:0 0 8px rgba(14,217,244,.25)}
+[data-theme="synthwave"] input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--cyan) var(--pct,0%),#2a2640 var(--pct,0%))}
+[data-theme="synthwave"] input[type=range]::-webkit-slider-thumb{width:30px;height:30px;margin-top:-12.5px;background:var(--pink);border:3px solid #fff;box-shadow:var(--glow-pink)}
+[data-theme="synthwave"] input[type=range]::-moz-range-thumb{width:26px;height:26px;background:var(--pink);border:3px solid #fff}
+[data-theme="synthwave"] input[type=range][data-set="0"]::-webkit-slider-thumb{background:#2a2640;border-color:var(--text-dim);box-shadow:none}
+[data-theme="synthwave"] input[type=range][data-set="0"]::-moz-range-thumb{background:#2a2640;border-color:var(--text-dim)}
+
+/* ---- Racing identity: car numbers, battles, leaderboard, bracket ----------------------------------- */
+[data-theme="synthwave"] .car{font-family:var(--condensed);font-weight:700;font-size:max(1em,17px);line-height:1.25;background:var(--cyan);color:#05121a;border:0;border-radius:5px;padding:1px 7px;min-width:2.3em;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+[data-theme="synthwave"] .onTrackName{font-family:var(--condensed);font-weight:800;font-size:40px;text-transform:uppercase;transform:none;text-shadow:none;letter-spacing:.02em}
+[data-theme="synthwave"] .onTrackName .car{font-size:1em;padding:0 10px;margin-right:8px;box-shadow:var(--glow-cyan)}
+[data-theme="synthwave"] .onTrack{font-family:var(--condensed);font-size:28px;text-transform:uppercase}
+[data-theme="synthwave"] .versus>div{background:#0c0a1f;border:1px solid rgba(14,217,244,.35);border-radius:10px;font-family:var(--condensed);font-size:22px;text-transform:uppercase}
+[data-theme="synthwave"] .versus .won{border-color:var(--pink);box-shadow:inset 4px 0 0 var(--pink),var(--glow-pink);background:#1a0c22}
+[data-theme="synthwave"] .versus .tag{color:var(--text-muted);letter-spacing:.1em;font-size:14px;font-weight:600}
+[data-theme="synthwave"] .vs{font-family:var(--display);font-size:28px;color:var(--pink);transform:skewX(-10deg);text-shadow:2px 2px 0 #000}
+[data-theme="synthwave"] .lead{font-size:20px;text-transform:uppercase;letter-spacing:.04em}
+[data-theme="synthwave"] .lead b{color:var(--cyan)}
+[data-theme="synthwave"] .decision{min-height:96px;background:#0c0a1f;border:1px solid rgba(14,217,244,.45);font-size:28px}
+[data-theme="synthwave"] .decision small{font-family:var(--condensed);font-size:16px;font-weight:600;letter-spacing:.03em;color:var(--text)}
+[data-theme="synthwave"] .decision.chosen{background:var(--pink);border-color:#fff;color:#fff;outline:none;box-shadow:var(--glow-pink)}
+[data-theme="synthwave"] .decision.chosen small{color:#fff}
+[data-theme="synthwave"] .decision.chosen::after{content:'✓ YOUR VOTE';display:block;font-size:14px;letter-spacing:.1em;margin-top:4px}
+[data-theme="synthwave"] .special button{border-color:rgba(255,196,64,.5);color:#ffd98a}
+[data-theme="synthwave"] .result{font-family:var(--condensed);font-size:28px;text-transform:uppercase}
+[data-theme="synthwave"] .calls{background:rgba(255,196,64,.08);border:1px solid rgba(255,196,64,.35)}
+
+[data-theme="synthwave"] table.board{font-size:19px}
+[data-theme="synthwave"] .board th{font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-dim)}
+[data-theme="synthwave"] .board td{border-color:rgba(255,255,255,.06);padding:10px 4px;font-variant-numeric:tabular-nums}
+[data-theme="synthwave"] .board td:first-child{font-weight:800;font-size:26px;color:var(--text-muted);width:2.2em}
+[data-theme="synthwave"] .board tr:nth-child(-n+3) td:first-child{color:#fff}
+[data-theme="synthwave"] .board tr:first-child td:first-child{color:var(--pink);text-shadow:0 0 12px rgba(233,31,166,.5)}
+[data-theme="synthwave"] .board tr.in td:first-child{box-shadow:inset 3px 0 0 var(--cyan)}
+[data-theme="synthwave"] .board td:last-child b{font-size:22px;color:#fff}
+
+[data-theme="synthwave"] .battle{background:#0c0a1f;border:1px solid rgba(14,217,244,.3);border-radius:8px;min-height:0;text-transform:none;font-size:18px;font-weight:600;letter-spacing:.01em}
+[data-theme="synthwave"] .battle.current{border-color:var(--pink);box-shadow:var(--glow-pink)}
+[data-theme="synthwave"] .slot.won{background:linear-gradient(90deg,rgba(233,31,166,.35),rgba(233,31,166,.08))}
+[data-theme="synthwave"] .round h3{font-size:15px}
+
+[data-theme="synthwave"] .people li{border-color:rgba(255,255,255,.07);font-size:19px}
+[data-theme="synthwave"] .listBtn{background:#0c0a1f;text-transform:none}
+[data-theme="synthwave"] .listBtn.current{outline:none;border-color:var(--pink);box-shadow:inset 4px 0 0 var(--pink)}
+[data-theme="synthwave"] .checks li:before{color:var(--text-dim)}
+[data-theme="synthwave"] .checks li.ok:before{color:var(--cyan)}
+
+/* ---- Status ------------------------------------------------------------------------------ */
+[data-theme="synthwave"] .badge{font-family:var(--condensed);font-weight:600;font-size:15px;letter-spacing:.08em;padding:3px 9px;text-transform:uppercase;border-radius:4px;background:#1d1a30;color:var(--text)}
+[data-theme="synthwave"] .badge.ok{background:rgba(14,217,244,.14);color:var(--cyan);border:1px solid rgba(14,217,244,.5)}
+[data-theme="synthwave"] .badge.warn{background:rgba(255,196,64,.12);color:#ffd98a;border:1px solid rgba(255,196,64,.45)}
+[data-theme="synthwave"] .badge.bad{background:rgba(233,31,166,.14);color:#ff9bd6;border:1px solid var(--border-hot)}
+[data-theme="synthwave"] .banner.warn{background:rgba(255,196,64,.12);border:1px solid rgba(255,196,64,.45);color:#ffe3a3;font-weight:600}
+[data-theme="synthwave"] .toast{font-family:var(--condensed);font-size:18px;font-weight:700;background:#18152a;border:1px solid var(--border);box-shadow:0 10px 30px #000c}
+[data-theme="synthwave"] .toast.ok{background:#0b2530;border-color:var(--cyan);box-shadow:var(--glow-cyan)}
+[data-theme="synthwave"] .toast.error{background:#2a0b1f;border-color:var(--pink);box-shadow:var(--glow-pink)}
+[data-theme="synthwave"] .toast.warn{background:#2a2108;border-color:rgba(255,196,64,.6)}
+
+/* ---- Live display: the one working screen that is allowed to be a poster ------------------------ */
+[data-theme="synthwave"] main.displayMode::before{content:'';position:fixed;left:0;right:0;bottom:0;height:46vh;z-index:-1;pointer-events:none;
+  background:url(./assets/hero-scene.svg) center bottom/cover no-repeat;opacity:.35;-webkit-mask:linear-gradient(180deg,transparent,#000 40%);mask:linear-gradient(180deg,transparent,#000 40%)}
+[data-theme="synthwave"] .displayMode .live{border-color:var(--border-hot);box-shadow:var(--glow-pink)}
+/* Big screen before the event starts and after it ends: the key art fills the room. */
+[data-theme="synthwave"] main.displayMode:is([data-phase="setup"],[data-phase="finished"])::before{top:0;height:auto;opacity:.75;
+  background:linear-gradient(180deg,rgba(9,7,22,.35),rgba(9,7,22,.85) 70%),url(./assets/hero-art.webp) center 30%/cover no-repeat;-webkit-mask:none;mask:none}
+[data-theme="synthwave"] main.displayMode:is([data-phase="setup"],[data-phase="finished"]) .card{background:rgba(9,7,22,.7);backdrop-filter:blur(4px)}
+[data-theme="synthwave"] .displayMode .huge{font-family:var(--condensed);font-weight:800;font-size:64px;text-transform:uppercase;transform:none}
+[data-theme="synthwave"] .displayMode .versus{font-size:34px}
+[data-theme="synthwave"] .displayMode .versus>div{font-size:34px;padding:18px}
+
+@media (min-width:900px){
+  /* Judges on a tablet: context left, controls right. */
+  [data-theme="synthwave"] main[data-screen="judge"] form.card[data-submit="score"]{display:grid;grid-template-columns:1fr 1.3fr;column-gap:28px;align-items:start}
+  [data-theme="synthwave"] main[data-screen="judge"] form.card[data-submit="score"]>:not(.scores):not(button){grid-column:1}
+  [data-theme="synthwave"] main[data-screen="judge"] form.card[data-submit="score"]>.scores{grid-column:2;grid-row:1/span 4}
+  [data-theme="synthwave"] main[data-screen="judge"] form.card[data-submit="score"]>button{grid-column:2}
+}

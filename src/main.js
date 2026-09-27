@@ -1,4 +1,5 @@
 import './style.css'
+import './theme/synthwave.css'
 import QRCode from 'qrcode'
 import {sb,rpc,inviteInfo,watchCompetition,NetworkError} from './api.js'
 import {queueCall,pendingCalls,failedCalls,clearFailed,flush} from './sync.js'
@@ -40,13 +41,14 @@ function setSession(v){
 // ------------------------------------------------------------------------------------------------
 
 function render(){
-  const inputs=[...app.querySelectorAll('input[id]')].map(el=>({id:el.id,value:el.value,checked:el.checked,type:el.type}))
+  const inputs=[...app.querySelectorAll('input[id]')].map(el=>({id:el.id,value:el.value,checked:el.checked,type:el.type,set:el.dataset.set}))
   const focus=document.activeElement?.id
   app.innerHTML=shell(s)
   for(const v of inputs){
     const el=$(v.id)
     if(!el||el.readOnly)continue
     if(v.type==='radio'||v.type==='checkbox')el.checked=v.checked
+    else if(v.type==='range'){if(v.set==='1'){el.value=v.value;markSlider(el)}}
     else el.value=v.value
   }
   if(focus&&$(focus))$(focus).focus()
@@ -58,6 +60,14 @@ async function drawQrs(){
   if(!missing.length)return
   for(const t of missing){try{s.qr[t]=await QRCode.toDataURL(t,{width:440,margin:1})}catch{}}
   render()
+}
+
+function markSlider(el){
+  el.dataset.set='1'
+  el.style.setProperty('--pct',`${el.value/el.max*100}%`)
+  el.setAttribute('aria-valuetext',el.value)
+  const out=$(`${el.id}-out`)
+  if(out)out.textContent=el.value
 }
 
 let toastTimer
@@ -130,7 +140,7 @@ function goto(page){
 }
 
 const actions={
-  nav:({page})=>{if(page==='join'||page==='driver'){s.invite=null;s.joinCode='';s.registerCode=''}goto(page)},
+  nav:({page,role})=>{if(page==='join'||page==='driver'){s.invite=null;s.joinCode='';s.registerCode='';s.joinRole=role||'judge'}goto(page)},
   refresh:()=>refresh(),
   async create(){
     const judges=Number(document.querySelector('input[name="judgeCount"]:checked')?.value||3)
@@ -190,6 +200,13 @@ const actions={
     if(next)await actions.setQualRun({driver:next.driver.id,run:next.run})
   },
   pickBracket:el=>{s.bracketSize=Number(el.value);render()},
+  nudge({for:id,step}){
+    const el=$(id)
+    if(!el)return
+    const base=el.dataset.set==='1'?Number(el.value):Number(el.max)/2
+    el.value=Math.min(Number(el.max),Math.max(0,el.dataset.set==='1'?base+Number(step):base))
+    markSlider(el)
+  },
   async buildBracket({size}){
     if(!confirm(`Close qualifying and build the Top ${size} bracket?`))return
     await rpc('build_bracket',{p_competition_id:s.session.competition_id,p_size:Number(size)});await refresh()
@@ -206,8 +223,9 @@ const actions={
   async score({driver,run}){
     const key=`${driver}-${run}`,v={}
     for(const [k,max] of Object.entries(SCORE_LIMITS)){
-      const n=Number(value(`score-${k}-${key}`))
-      if(value(`score-${k}-${key}`)===''||!(n>=0&&n<=max))return toast(`${k[0].toUpperCase()+k.slice(1)} must be between 0 and ${max}`,'error')
+      const el=$(`score-${k}-${key}`),n=Number(el?.value),label=k[0].toUpperCase()+k.slice(1)
+      if(el?.dataset.set!=='1')return toast(`Set a ${label} score`,'error')
+      if(!(n>=0&&n<=max))return toast(`${label} must be between 0 and ${max}`,'error')
       v[k]=n
     }
     await judgeSubmit('submit_qualifying_score',{p_competition_id:s.session.competition_id,p_driver_id:driver,p_run:Number(run),p_line:v.line,p_angle:v.angle,p_style:v.style},`Score sent: ${v.line+v.angle+v.style}`)
@@ -233,6 +251,7 @@ app.addEventListener('click',e=>{
   e.preventDefault()
   run(el.dataset.action,{...el.dataset})
 })
+app.addEventListener('input',e=>{if(e.target.type==='range')markSlider(e.target)})
 app.addEventListener('submit',e=>{
   e.preventDefault()
   const f=e.target
@@ -252,7 +271,7 @@ setInterval(()=>{if(document.visibilityState==='visible'){refresh();syncQueue()}
 
 async function start(){
   if(params.has('register')){s.registerCode=params.get('register').toUpperCase();s.page='driver'}
-  else if(params.has('join')){s.joinCode=params.get('join').toUpperCase();s.page='join'}
+  else if(params.has('join')){s.joinCode=params.get('join').toUpperCase();s.joinRole='judge';s.page='join'}
   if(params.has('register')||params.has('join'))history.replaceState(null,'',s.appUrl+(s.displayMode?'?view=display':''))
   if(!sb)s.error='Backend is not configured.'
   render()

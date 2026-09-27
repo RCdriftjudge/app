@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" preserveAspectRatio="xMaxYMax meet"><defs><g id="palm"><path d="M-7 0 C-4 -90 6 -170 22 -250 L30 -248 C16 -168 8 -88 7 0 Z"/>
+<path d="M26 -250 C-10 -270 -60 -262 -92 -226 C-58 -250 -18 -252 24 -244Z"/><path d="M26 -250 C60 -276 112 -268 140 -232 C104 -254 66 -254 28 -244Z"/>
+<path d="M26 -252 C0 -300 -50 -318 -86 -306 C-48 -300 -14 -282 22 -246Z"/><path d="M28 -252 C58 -300 104 -312 134 -296 C98 -294 64 -282 30 -246Z"/>
+<path d="M26 -250 C4 -226 -22 -186 -30 -150 C-12 -186 10 -218 30 -244Z"/><path d="M28 -250 C54 -228 76 -196 84 -160 C66 -192 46 -218 26 -244Z"/>
+<path d="M26 -254 C22 -290 30 -318 52 -336 C40 -312 36 -290 32 -252Z"/></g></defs>
+<g fill="#05040b"><use href="#palm" transform="translate(250 520) scale(-1.3 1.3)"/><use href="#palm" transform="translate(100 520) scale(-0.8 .8) rotate(-4)"/></g></svg>

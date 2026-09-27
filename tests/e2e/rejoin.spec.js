@@ -69,11 +69,27 @@ test('competitor registration shows car number and two-character rejoin code, th
 test('judge QR lands directly in judge join flow',async({page})=>{
   await mockSupabase(page)
   await page.goto('/?join=J7')
-  await expect(page.getByRole('heading',{name:'Join Competition'})).toBeVisible()
+  await expect(page.getByRole('heading',{name:'Join as Judge'})).toBeVisible()
   await expect(page.locator('#code')).toHaveValue('J7')
   await expect(page.getByText('Joining Saturday Night Drift')).toBeVisible()
   await expect(page.getByRole('button',{name:'Join as Judge'})).toBeVisible()
-  await expect(page.getByRole('button',{name:'Join as Live Display'})).toBeVisible()
+})
+
+test('home offers separate judge and live display joins',async({page})=>{
+  await mockSupabase(page)
+  let role
+  await page.route('**/rest/v1/rpc/join_competition_by_code',async route=>{role=JSON.parse(route.request().postData()).p_role;await route.fulfill(json({competition_id:'comp-1',member_id:'m1',role:'display'}))})
+  await page.goto('/')
+  await page.getByRole('button',{name:'Set up a Live Display screen'}).click()
+  await expect(page.getByRole('heading',{name:'Set up Live Display'})).toBeVisible()
+  await page.locator('#code').fill('K7Q2XM')
+  await page.getByRole('button',{name:'Connect Live Display'}).click()
+  await expect.poll(()=>role).toBe('display')
+  await page.goto('/')
+  await page.evaluate(()=>localStorage.clear())
+  await page.goto('/')
+  await page.getByRole('button',{name:'Join as Judge'}).click()
+  await expect(page.getByRole('heading',{name:'Join as Judge'})).toBeVisible()
 })
 
 test('invalid rejoin code produces an actionable error',async({page})=>{

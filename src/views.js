@@ -25,12 +25,19 @@ const badge=(text,kind='')=>`<span class="badge ${kind}">${esc(text)}</span>`
 
 export function shell(s){
   const c=s.data?.competition
-  return `<main class="${s.displayMode||screenRole(s)==='display'?'displayMode':''}">
-<header><div><h1>RC Drift Judge</h1><small>${c?esc(c.name):'v1.1'}</small></div><div class="hdr">${c?badge(PHASES[c.phase]||c.phase):''}<span class="statusdot ${s.online?'on':''}" title="${s.online?'Online':'Offline'}"></span></div></header>
+  return `<main class="${s.displayMode||screenRole(s)==='display'?'displayMode':''}" data-screen="${screenName(s)}" data-phase="${esc(c?.phase||'')}">
+<header><div><h1 class="logo"><span>RC</span> <span>Drift</span> <span>Judge</span></h1><small>${c?esc(c.name):'v1.1'}</small></div><div class="hdr">${c?badge(PHASES[c.phase]||c.phase):''}<span class="statusdot ${s.online?'on':''}" title="${s.online?'Online':'Offline'}"></span></div></header>
 ${!s.online?`<div class="banner warn">Offline. Judge scores and votes are saved on this device and sent when you reconnect.</div>`:''}
 ${screen(s)}
 ${s.toast?`<div class="toast ${esc(s.toast.kind||'')}" role="status">${esc(s.toast.text)}</div>`:''}
 </main>`
+}
+
+// Which screen is showing, for styling only (e.g. the theme decorates landing screens more than working ones).
+function screenName(s){
+  if(s.page!=='home')return s.page
+  if(!s.session)return 'home'
+  return s.data?screenRole(s):'loading'
 }
 
 export function screenRole(s){
@@ -60,9 +67,10 @@ function screen(s){
 export function homeView(){
   return `<section class="card hero"><h2>RC Drift Competition</h2><p class="muted">Create an event, join one, or register as a competitor.</p>
 <button data-action="nav" data-page="create" class="primary">Create Competition</button>
-<button data-action="nav" data-page="join">Join as Judge or Display</button>
+<button data-action="nav" data-page="join" data-role="judge">Join as Judge</button>
 <button data-action="nav" data-page="driver">Register as Competitor</button>
-<button data-action="nav" data-page="rejoin">Already registered? Rejoin</button></section>`
+<button data-action="nav" data-page="rejoin">Already registered? Rejoin</button>
+<button data-action="nav" data-page="join" data-role="display" class="link">Set up a Live Display screen</button></section>`
 }
 
 export function loadingView(s){
@@ -79,12 +87,12 @@ export function createView(){
 
 export function joinView(s){
   const invite=s.invite?.kind==='judge'?s.invite:null
-  return `<form class="card hero" data-submit="join" data-role="judge"><h2>Join Competition</h2>
-${invite?`<p class="muted">Joining <b>${esc(invite.competition_name)}</b></p>`:'<p class="muted">Enter the access code from the director.</p>'}
+  const display=s.joinRole==='display'
+  return `<form class="card hero" data-submit="join" data-role="${display?'display':'judge'}"><h2>${display?'Set up Live Display':'Join as Judge'}</h2>
+${invite?`<p class="muted">Joining <b>${esc(invite.competition_name)}</b></p>`:`<p class="muted">${display?'Enter the access code from the director to put this screen on the big display.':'Enter the access code from the director.'}</p>`}
 <label>Access code<input id="code" value="${esc(s.joinCode)}" placeholder="K7Q2XM" autocapitalize="characters" autocomplete="off" required ${s.joinCode?'readonly':''}></label>
-<label>Your name<input id="name" placeholder="Your name"></label>
-<button type="submit" class="primary">Join as Judge</button>
-<button type="button" data-action="join" data-role="display">Join as Live Display</button>
+<label>${display?'Screen name':'Your name'}<input id="name" placeholder="${display?'e.g. Pit wall TV':'Your name'}"></label>
+<button type="submit" class="primary">${display?'Connect Live Display':'Join as Judge'}</button>
 <button type="button" data-action="nav" data-page="home">Back</button></form>`
 }
 
@@ -267,6 +275,16 @@ ${s.failed?.length?`<p><b>${s.failed.length} not accepted:</b></p><ul>${s.failed
 
 const queuedFor=(s,fn,match)=>(s.pending||[]).filter(p=>p.fn===fn&&Object.entries(match).every(([k,v])=>p.args[k]===v)).pop()
 
+// Slider plus a large readout and -/+ nudges for exact half points. Starts unset ("—") so an untouched
+// slider can't be submitted as a score by accident.
+export function scoreSlider(id,label,max,value){
+  const set=value!==''&&value!=null
+  return `<div class="score"><div class="scoreHead"><label for="${id}">${esc(label)} <span class="muted">/ ${max}</span></label><output for="${id}" id="${id}-out">${set?esc(value):'—'}</output></div>
+<div class="scoreCtl"><button type="button" class="nudge" data-action="nudge" data-for="${id}" data-step="-0.5" aria-label="${esc(label)} down half a point">−</button>
+<input id="${id}" type="range" min="0" max="${max}" step="0.5" value="${set?esc(value):0}" data-set="${set?1:0}" aria-valuetext="${set?esc(value):'not set'}" style="--pct:${set?(Number(value)/max*100):0}%">
+<button type="button" class="nudge" data-action="nudge" data-for="${id}" data-step="0.5" aria-label="${esc(label)} up half a point">+</button></div></div>`
+}
+
 function judgeQualifying(s){
   const {competition:c,my_scores}=s.data
   const d=driverMap(s)[c.active_driver_id]
@@ -277,7 +295,7 @@ function judgeQualifying(s){
   const key=`${d.id}-${c.active_run}`
   return `<form class="card" data-submit="score" data-driver="${d.id}" data-run="${c.active_run}"><small>QUALIFYING · RUN ${c.active_run}</small>
 <h2 class="onTrackName">${driverLabel(d)}</h2>${d.team_name?`<p class="muted">${esc(d.team_name)}</p>`:''}
-<div class="scores">${Object.entries(SCORE_LIMITS).map(([k,max])=>`<label>${k[0].toUpperCase()+k.slice(1)} <span class="muted">/ ${max}</span><input id="score-${k}-${key}" type="number" inputmode="decimal" min="0" max="${max}" step="0.5" value="${esc(val(k))}" required></label>`).join('')}</div>
+<div class="scores">${Object.entries(SCORE_LIMITS).map(([k,max])=>scoreSlider(`score-${k}-${key}`,k[0].toUpperCase()+k.slice(1),max,val(k))).join('')}</div>
 ${queued?`<p>${badge('Saved offline','warn')} Total ${fmt(Number(queued.args.p_line)+Number(queued.args.p_angle)+Number(queued.args.p_style))}</p>`:mine?`<p>${badge('Submitted','ok')} Total <b>${fmt(mine.total)}</b>. You can change it until the director moves on.</p>`:''}
 <button type="submit" class="primary big">${mine||queued?'Update score':'Submit score'}</button></form>`
 }
@@ -332,7 +350,7 @@ export function displayView(s){
   if(c.phase==='setup'){
     const approved=drivers.filter(x=>x.status==='approved')
     main=`<section class="card live"><small>REGISTRATION OPEN</small><h2>Scan to register</h2>${c.driver_registration_code?`${qr(s,registerUrl(s,c.driver_registration_code),'Driver registration')}<div class="code">${esc(c.driver_registration_code)}</div>`:''}</section>
-<section class="card"><small>DRIVERS</small><h2>${approved.length} confirmed</h2><ul class="people">${approved.map(x=>`<li>${driverLabel(x)}</li>`).join('')}</ul></section>`
+<section class="card"><small>DRIVERS</small><h2>${approved.length} confirmed</h2><ul class="people">${approved.map(x=>`<li><div>${driverLabel(x)}${x.team_name?` <span class="muted">· ${esc(x.team_name)}</span>`:''}</div></li>`).join('')}</ul></section>`
   }else if(c.phase==='qualifying'){
     const cur=d[c.active_driver_id]
     main=`<section class="card live"><small>QUALIFYING · RUN ${c.active_run}</small><h2 class="huge">${cur?driverLabel(cur):'—'}</h2>${cur?.team_name?`<p class="muted">${esc(cur.team_name)}</p>`:''}</section>

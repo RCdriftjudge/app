@@ -1,5 +1,5 @@
 // Keeps the app shell available when venue wifi drops. Supabase requests are cross-origin and never cached.
-const CACHE='rcdj-shell-v1'
+const CACHE='rcdj-shell-v2'
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./','./manifest.webmanifest'])));self.skipWaiting()})
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim()})
 self.addEventListener('fetch',e=>{

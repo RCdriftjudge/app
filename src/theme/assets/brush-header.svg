@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 110" preserveAspectRatio="none">
+<defs>
+<filter id="r" x="-8%" y="-40%" width="116%" height="180%"><feTurbulence type="fractalNoise" baseFrequency="0.035 0.3" numOctaves="3" seed="33"/><feDisplacementMap in="SourceGraphic" scale="16" xChannelSelector="R" yChannelSelector="G"/></filter>
+<filter id="s" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.0035 0.55" numOctaves="2" seed="37"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  3.2 0 0 0 -1.55"/></filter>
+<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="800" height="110"><rect width="800" height="110" fill="#fff"/><rect width="800" height="110" filter="url(#s)"/></mask>
+</defs>
+<g mask="url(#m)"><polygon filter="url(#r)" points="10,18 796,4 784,92 2,104" fill="#e91fa6"/><polygon filter="url(#r)" points="0,70 380,62 372,104 0,108" fill="#0ed9f4" opacity=".9"/></g>
+</svg>

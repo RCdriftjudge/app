@@ -59,7 +59,7 @@ npm run dev
 - `npm run test:e2e` runs the UI tests with a mocked backend.
 - `npm run test:db` runs a whole competition through the RPCs against local Supabase, including seats, blind judging, OMT, overrides, bracket seeding, rejoin and rate limiting.
 - `npm run walkthrough` runs a recorded six-device end-to-end event against local Supabase. It writes `test-results/walkthrough/walkthrough.mp4` and needs ffmpeg.
-- `npm run storybook` shows every screen in every state.
+- `npm run storybook` shows every screen in every state. The toolbar **Theme** switch compares the synthwave theme (`src/theme/`) with the original styles.
 
 ## Security
 - `.env.local` is excluded from Git.
