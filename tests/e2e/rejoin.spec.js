@@ -6,9 +6,11 @@ const session={access_token:'test-token',refresh_token:'test-refresh',expires_in
 async function mockSupabase(page){
   await page.route('**/auth/v1/signup',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(session)}))
   await page.route('**/auth/v1/user',async route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({user:authUser})}))
+  await page.route('**/rest/v1/competitions**',async route=>route.fulfill({status:200,contentType:'application/json',body:'[]'}))
 }
 
 test('competitor QR lands in registration flow with competition intent',async({page})=>{
+  await mockSupabase(page)
   await page.goto('/?register=RACE42')
   await expect(page.getByRole('heading',{name:'Register as Competitor'})).toBeVisible()
   await expect(page.locator('#driverCode')).toHaveValue('RACE42')
@@ -49,6 +51,7 @@ test('competitor registration shows car number and two-character rejoin code, th
 })
 
 test('judge QR lands directly in judge join flow',async({page})=>{
+  await mockSupabase(page)
   await page.goto('/?join=J7')
   await expect(page.getByRole('heading',{name:'Join Competition'})).toBeVisible()
   await expect(page.locator('#code')).toHaveValue('J7')
