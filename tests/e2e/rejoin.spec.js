@@ -14,7 +14,7 @@ test('competitor QR lands in registration flow with competition intent',async({p
   await page.goto('/?register=RACE42')
   await expect(page.getByRole('heading',{name:'Register as Competitor'})).toBeVisible()
   await expect(page.locator('#driverCode')).toHaveValue('RACE42')
-  await expect(page.getByText('Enter the competition registration code.')).toBeVisible()
+  await expect(page.getByRole('button',{name:'Register'})).toBeVisible()
 })
 
 test('competitor registration shows car number and two-character rejoin code, then restores same identity',async({page})=>{
