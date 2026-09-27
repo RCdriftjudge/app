@@ -18,6 +18,7 @@
 }
 
 [data-theme="synthwave"] body{
+  overflow-x:clip; /* decorations and the slide-in transition must never make the page scroll sideways */
   background:radial-gradient(circle at 50% -10%,rgba(105,20,150,.28),transparent 42%),linear-gradient(180deg,#0b0818 0%,#070711 100%) fixed;
   color:var(--text);font-family:var(--condensed);font-weight:500;font-size:17px;letter-spacing:.01em;
 }

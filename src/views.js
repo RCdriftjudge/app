@@ -165,11 +165,12 @@ function qualifyingControl(s){
   const pick=s.bracketSize&&sizes.includes(s.bracketSize)?s.bracketSize:sizes[sizes.length-1]
   return `<section class="card"><small>DIRECTOR · QUALIFYING</small><h2>On track</h2>
 ${cur?`<div class="onTrack"><div>${driverLabel(cur.driver)}</div><div>${badge('Run '+cur.run)}</div></div>`:'<p class="muted">Pick a driver below.</p>'}
-<p>Judges scored: <b>${scored}/${judges.length}</b>${scored>=c.judge_count?' '+badge('Complete','ok'):''}</p>
+<p>Judges scored: <b>${scored}/${judges.length}</b>${progress.find(p=>p.driver_id===c.active_driver_id&&p.run===c.active_run)?.complete?' '+badge('Complete','ok'):''}</p>
 <div class="row"><button data-action="qualStep" data-dir="-1" ${i<=0?'disabled':''}>◀ Previous</button><button class="primary" data-action="qualStep" data-dir="1" ${i>=order.length-1?'disabled':''}>Next ▶</button></div>
 <details><summary>Jump to driver</summary><div class="list">${order.map(o=>{
     const n=progress.find(p=>p.driver_id===o.driver.id&&p.run===o.run)?.scored||0
-    return `<button class="listBtn ${o===cur?'current':''}" data-action="setQualRun" data-driver="${esc(o.driver.id)}" data-run="${o.run}">${driverLabel(o.driver)} <span class="muted">Run ${o.run} · ${n}/${c.judge_count}</span></button>`}).join('')}</div></details>
+    const done=progress.find(p=>p.driver_id===o.driver.id&&p.run===o.run)?.complete
+    return `<button class="listBtn ${o===cur?'current':''}" data-action="setQualRun" data-driver="${esc(o.driver.id)}" data-run="${o.run}">${driverLabel(o.driver)} <span class="muted">Run ${o.run} · ${done?'✓ done':`${n}/${judges.length}`}</span></button>`}).join('')}</div></details>
 </section>
 <section class="card"><small>END OF QUALIFYING</small><h2>Build tandem bracket</h2>
 ${sizes.length?`<div class="seg">${sizes.map(n=>`<label><input type="radio" name="bracketSize" value="${n}" data-action="pickBracket" ${n===pick?'checked':''}><span>Top ${n}</span></label>`).join('')}</div>
@@ -232,7 +233,7 @@ function driversCard(s){
   const groups=[['pending','Waiting for approval'],['approved','Approved'],['rejected','Rejected']]
   const open=c.phase==='setup'
   return `<section class="card"><small>DRIVERS</small><h2>${drivers.filter(d=>d.status==='approved').length} approved</h2>
-${groups.map(([st,label])=>{const list=drivers.filter(d=>d.status===st);return list.length?`<h3>${label} (${list.length})</h3><ul class="people">${list.map(d=>`<li><div>${driverLabel(d)}${d.team_name?`<br><span class="muted small">${esc(d.team_name)}</span>`:''}</div><div class="actions">${d.rejoin_code?`<span class="muted small" title="Rejoin code">${esc(d.rejoin_code)}</span>`:''}${open&&st!=='approved'?`<button class="small primary" data-action="driverStatus" data-driver="${d.id}" data-status="approved">Approve</button>`:''}${open&&st!=='rejected'?`<button class="small" data-action="driverStatus" data-driver="${d.id}" data-status="rejected">Reject</button>`:''}</div></li>`).join('')}</ul>`:''}).join('')}
+${groups.map(([st,label])=>{const list=drivers.filter(d=>d.status===st);return list.length?`<h3>${label} (${list.length})</h3><ul class="people">${list.map(d=>`<li><div>${driverLabel(d)}${d.team_name?`<br><span class="muted small">${esc(d.team_name)}</span>`:''}</div><div class="actions">${d.rejoin_code?`<span class="muted small" title="Rejoin code">${esc(d.rejoin_code)}</span>`:''}${d.released?badge('Released','warn'):d.self_registered&&st!=='rejected'?`<button class="small ghost" data-action="releaseDriver" data-driver="${d.id}" data-name="${esc(d.name)}">New phone</button>`:''}${open&&st!=='approved'?`<button class="small primary" data-action="driverStatus" data-driver="${d.id}" data-status="approved">Approve</button>`:''}${open&&st!=='rejected'?`<button class="small" data-action="driverStatus" data-driver="${d.id}" data-status="rejected">Reject</button>`:''}</div></li>`).join('')}</ul>`:''}).join('')}
 ${!drivers.length?'<p class="muted">No drivers yet. Share the driver QR code or add drivers here.</p>':''}
 ${open?`<form class="inline" data-submit="addDriver"><input id="newDriverName" placeholder="Driver name" required><input id="newDriverTeam" placeholder="Team (optional)"><button type="submit">Add driver</button></form>`:'<p class="muted small">The driver list is locked once qualifying starts.</p>'}</section>`
 }
@@ -240,7 +241,8 @@ ${open?`<form class="inline" data-submit="addDriver"><input id="newDriverName" p
 function judgesCard(s){
   const {competition:c,judges}=s.data
   const seats=Array.from({length:c.judge_count},(_,i)=>judges.find(j=>j.judge_number===i+1))
-  return `<section class="card"><small>JUDGES</small><h2>${judges.length}/${c.judge_count} seated</h2><ul class="people">${seats.map((j,i)=>`<li><div><b>Judge ${i+1}</b> ${j?esc(j.display_name):'<span class="muted">Empty seat</span>'}</div><div class="actions">${j?`<span class="muted small" title="Rejoin code">${esc(j.rejoin_code)}</span><button class="small" data-action="removeJudge" data-member="${j.member_id}" data-name="${esc(j.display_name)}">Remove</button>`:''}</div></li>`).join('')}</ul></section>`
+  return `<section class="card"><small>JUDGES</small><h2>${judges.length}/${c.judge_count} seated</h2><ul class="people">${seats.map((j,i)=>`<li><div><b>Judge ${i+1}</b> ${j?esc(j.display_name):'<span class="muted">Empty seat</span>'}${j?.released?`<br>${badge(`Released: rejoin with ${j.rejoin_code} on the new phone`,'warn')}`:''}</div><div class="actions">${j?`<span class="muted small" title="Rejoin code">${esc(j.rejoin_code)}</span>${j.released?'':`<button class="small" data-action="releaseJudge" data-member="${j.member_id}" data-name="${esc(j.display_name)}">New phone</button>`}<button class="small ghost" data-action="removeJudge" data-member="${j.member_id}" data-name="${esc(j.display_name)}">Replace</button>`:''}</div></li>`).join('')}</ul>
+<p class="muted small"><b>New phone</b> keeps the judge, their seat and scores: they rejoin with their code. <b>Replace</b> opens the seat for a different person; scores already given still count.</p></section>`
 }
 
 function invitesCard(s){
