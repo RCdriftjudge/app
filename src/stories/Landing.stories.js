@@ -4,7 +4,8 @@ export default {title:'Landing',tags:['autodocs'],parameters:{docs:{description:
 
 export const Home=story(landing('home'))
 export const CreateCompetition=story(landing('create'))
-export const JoinByCode=story(landing('join'),'Judges and displays join with the access code. Two explicit buttons, no hidden role state.')
+export const JoinByCode=story(landing('join',{joinRole:'judge'}),'Reached from "Join as Judge" on the home screen.')
+export const JoinAsDisplay=story(landing('join',{joinRole:'display'}),'Reached from the "Set up a Live Display screen" link on the home screen. Directors can also open the display from their own screen.')
 export const JoinFromQr=story(landing('join',{joinCode:'K7Q2XM',invite:{kind:'judge',competition_name:'Saturday Night Drift'}}),'Scanning the judge QR fills in the code and names the event.')
 export const RegisterByCode=story(landing('driver'))
 export const RegisterFromQr=story(landing('driver',{registerCode:'R4D9PL',invite:{kind:'driver',competition_name:'Saturday Night Drift',registration_open:true}}))

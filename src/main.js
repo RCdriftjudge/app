@@ -140,7 +140,7 @@ function goto(page){
 }
 
 const actions={
-  nav:({page})=>{if(page==='join'||page==='driver'){s.invite=null;s.joinCode='';s.registerCode=''}goto(page)},
+  nav:({page,role})=>{if(page==='join'||page==='driver'){s.invite=null;s.joinCode='';s.registerCode='';s.joinRole=role||'judge'}goto(page)},
   refresh:()=>refresh(),
   async create(){
     const judges=Number(document.querySelector('input[name="judgeCount"]:checked')?.value||3)
@@ -271,7 +271,7 @@ setInterval(()=>{if(document.visibilityState==='visible'){refresh();syncQueue()}
 
 async function start(){
   if(params.has('register')){s.registerCode=params.get('register').toUpperCase();s.page='driver'}
-  else if(params.has('join')){s.joinCode=params.get('join').toUpperCase();s.page='join'}
+  else if(params.has('join')){s.joinCode=params.get('join').toUpperCase();s.joinRole='judge';s.page='join'}
   if(params.has('register')||params.has('join'))history.replaceState(null,'',s.appUrl+(s.displayMode?'?view=display':''))
   if(!sb)s.error='Backend is not configured.'
   render()

@@ -17,7 +17,7 @@ fieldset{border:0;padding:0;margin:0 0 12px}legend{font-size:14px;color:#bbb;mar
 button{border:0;border-radius:12px;padding:14px;background:#292929;color:#fff;font-weight:700;font-size:15px;cursor:pointer}
 button:active{transform:scale(.98)}button:disabled{opacity:.4;cursor:not-allowed}
 button.small{padding:8px 12px;font-size:13px}
-.primary{background:#fff;color:#111}.ghost{background:transparent;border:1px solid #333;color:#aaa}
+.primary{background:#fff;color:#111}.link{background:none;color:#999;font-weight:600;font-size:14px;text-decoration:underline;text-underline-offset:3px}.ghost{background:transparent;border:1px solid #333;color:#aaa}
 .big{width:100%;margin:8px 0}
 .row{display:flex;gap:8px;flex-wrap:wrap}.row>button{flex:1}
 .busy button{opacity:.6;pointer-events:none}

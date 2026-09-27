@@ -125,8 +125,15 @@
 [data-theme="synthwave"] main[data-screen="home"] .hero>button::before{content:'';flex:none;width:26px;height:26px;background:currentColor;-webkit-mask:var(--icon) center/contain no-repeat;mask:var(--icon) center/contain no-repeat}
 [data-theme="synthwave"] main[data-screen="home"] .hero>button:not(.primary)::after{content:'';margin-left:auto;width:54px;height:14px;background:url(./assets/brush-short.svg) center/100% 100% no-repeat;opacity:.55}
 [data-theme="synthwave"] main[data-screen="home"] .hero>button.primary{justify-content:center}
+/* One-off setup the director does once per event: a quiet text link, not a menu item. */
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link{min-height:48px;margin-top:18px;padding:0;justify-content:center;background:none;border:0;box-shadow:none;
+  font-size:15px;font-weight:600;letter-spacing:.08em;color:var(--text-muted);text-decoration:underline;text-decoration-color:rgba(14,217,244,.5);text-underline-offset:4px}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link::before{width:18px;height:18px}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link::after{display:none}
+[data-theme="synthwave"] main[data-screen="home"] .hero>button.link:hover{color:var(--text)}
 [data-theme="synthwave"] [data-page="create"]{--icon:url(./assets/icons/flag.svg)}
 [data-theme="synthwave"] [data-page="join"]{--icon:url(./assets/icons/judge.svg)}
+[data-theme="synthwave"] [data-page="join"][data-role="display"]{--icon:url(./assets/icons/screen.svg)}
 [data-theme="synthwave"] [data-page="driver"]{--icon:url(./assets/icons/car.svg)}
 [data-theme="synthwave"] [data-page="rejoin"]{--icon:url(./assets/icons/rejoin.svg)}
 [data-theme="synthwave"] main[data-screen="home"] .hero>h2,[data-theme="synthwave"] main[data-screen="home"] .hero>p{display:none}

@@ -67,9 +67,10 @@ function screen(s){
 export function homeView(){
   return `<section class="card hero"><h2>RC Drift Competition</h2><p class="muted">Create an event, join one, or register as a competitor.</p>
 <button data-action="nav" data-page="create" class="primary">Create Competition</button>
-<button data-action="nav" data-page="join">Join as Judge or Display</button>
+<button data-action="nav" data-page="join" data-role="judge">Join as Judge</button>
 <button data-action="nav" data-page="driver">Register as Competitor</button>
-<button data-action="nav" data-page="rejoin">Already registered? Rejoin</button></section>`
+<button data-action="nav" data-page="rejoin">Already registered? Rejoin</button>
+<button data-action="nav" data-page="join" data-role="display" class="link">Set up a Live Display screen</button></section>`
 }
 
 export function loadingView(s){
@@ -86,12 +87,12 @@ export function createView(){
 
 export function joinView(s){
   const invite=s.invite?.kind==='judge'?s.invite:null
-  return `<form class="card hero" data-submit="join" data-role="judge"><h2>Join Competition</h2>
-${invite?`<p class="muted">Joining <b>${esc(invite.competition_name)}</b></p>`:'<p class="muted">Enter the access code from the director.</p>'}
+  const display=s.joinRole==='display'
+  return `<form class="card hero" data-submit="join" data-role="${display?'display':'judge'}"><h2>${display?'Set up Live Display':'Join as Judge'}</h2>
+${invite?`<p class="muted">Joining <b>${esc(invite.competition_name)}</b></p>`:`<p class="muted">${display?'Enter the access code from the director to put this screen on the big display.':'Enter the access code from the director.'}</p>`}
 <label>Access code<input id="code" value="${esc(s.joinCode)}" placeholder="K7Q2XM" autocapitalize="characters" autocomplete="off" required ${s.joinCode?'readonly':''}></label>
-<label>Your name<input id="name" placeholder="Your name"></label>
-<button type="submit" class="primary">Join as Judge</button>
-<button type="button" data-action="join" data-role="display">Join as Live Display</button>
+<label>${display?'Screen name':'Your name'}<input id="name" placeholder="${display?'e.g. Pit wall TV':'Your name'}"></label>
+<button type="submit" class="primary">${display?'Connect Live Display':'Join as Judge'}</button>
 <button type="button" data-action="nav" data-page="home">Back</button></form>`
 }
 

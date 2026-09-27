@@ -35,10 +35,11 @@ test('walkthrough: a full competition from registration to champion',async({brow
   await pause(1200)
 
   await step('The live display joins with the judge access code')
-  await display.goto(`/?join=${joinCode}`)
+  await display.getByRole('button',{name:'Set up a Live Display screen'}).click()
+  await display.locator('#code').pressSequentially(joinCode,{delay:40})
   await display.locator('#name').fill('Big screen')
   await pause(500)
-  await display.getByRole('button',{name:'Join as Live Display'}).click()
+  await display.getByRole('button',{name:'Connect Live Display'}).click()
   await expect(display.getByText('Scan to register')).toBeVisible()
 
   await step('Judges scan the judge QR code and are seated 1, 2 and 3')
